@@ -1,0 +1,25 @@
+// Výslovnosť cez hlas prehliadača. Keď nie je k dispozícii, ticho nerobí nič.
+let voice = null;
+
+function findVoice() {
+  if (!('speechSynthesis' in window)) return;
+  const vs = speechSynthesis.getVoices();
+  voice = vs.find((v) => v.lang === 'it-IT') || vs.find((v) => v.lang && v.lang.toLowerCase().startsWith('it')) || null;
+}
+
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  findVoice();
+  speechSynthesis.addEventListener?.('voiceschanged', findVoice);
+}
+
+export function speak(text) {
+  if (!('speechSynthesis' in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/[«»]/g, ''));
+    u.lang = 'it-IT';
+    if (voice) u.voice = voice;
+    u.rate = 0.88;
+    speechSynthesis.speak(u);
+  } catch { /* bez zvuku */ }
+}
