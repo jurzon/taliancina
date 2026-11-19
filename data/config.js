@@ -6,6 +6,8 @@ export default {
   defaultLesson: '6a',
   // Jedno ťukateľné slovo (regex bez príznakov). Taliančina: písmená + elízia (l', dell').
   word: "\\p{L}+'?",
+  // Slová, ktoré sa na začiatku vety v skladačke nezmenšujú
+  keepCaps: [],
 
   brand: {
     kicker: 'Lezione 6 · Un ambiente prezioso',

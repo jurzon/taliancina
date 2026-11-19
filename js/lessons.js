@@ -66,9 +66,10 @@ export function tokenize(line) {
 
 export const plain = (line) => tokenize(line).map((t) => t.sep ?? t.text).join('');
 
-// Skladačka viet
+// Skladačka viet. Prvé slovo vety sa zmenší, okrem slov z config.keepCaps (napr. anglické I).
+const keepCaps = new Set(config.keepCaps || []);
 export const norm = (s) => s.toLowerCase().replace(/[.,!?;:«»]/g, '').replace(/\s+/g, ' ').trim();
 export function tilesOf(sentence) {
   return sentence.replace(/[.,!?;:«»]/g, '').split(/\s+/).filter(Boolean)
-    .map((w, i) => (i === 0 ? w[0].toLowerCase() + w.slice(1) : w));
+    .map((w, i) => (i === 0 && !keepCaps.has(w) ? w[0].toLowerCase() + w.slice(1) : w));
 }

@@ -15,8 +15,8 @@ export function choice(lesson, rerender) {
   const el = h('div', { class: 'screen' }, topbar(lesson.choiceTitle, progress), main);
 
   const full = (c) => c.s.replace('___', c.o[0]);
-  // Karty typu „aká je to hypotéza?" nemajú taliansku odpoveď na prečítanie.
-  const speakable = (c) => !c.s.includes('?');
+  // Karta so say: false (napr. „aká je to hypotéza?“) nemá vetu na prečítanie.
+  const speakable = (c) => c.say !== false;
 
   function show() {
     const c = cards[i];
