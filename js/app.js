@@ -14,10 +14,17 @@ function home() {
   const streak = store.streak();
   const readCount = lesson.chapters.filter((_, i) => store.isRead(`${lesson.id}.${i}`)).length;
 
-  const tabs = h('div', { class: 'tabs', role: 'tablist' }, lessons.map((l) =>
-    h('button', { class: 'tab' + (l.id === lesson.id ? ' on' : ''), type: 'button', role: 'tab', 'aria-selected': String(l.id === lesson.id),
+  // Prepínač lekcií – iba keď je ich viac.
+  const tabs = lessons.length > 1 && h('nav', { class: 'lesson-switch', 'aria-label': 'Lekcie' }, lessons.map((l) =>
+    h('button', { class: 'lesson-pill' + (l.id === lesson.id ? ' on' : ''), type: 'button', 'aria-current': l.id === lesson.id ? 'true' : null,
       onclick: () => { store.lesson = l.id; render(); } },
     h('b', {}, l.code), ' ', l.title)));
+
+  // Pokrok v lekcii: hviezdy zo všetkých hier a prečítané kapitoly.
+  const gameIds = lesson.games.filter((id) => games[id]);
+  const starsGot = gameIds.reduce((n, id) => n + store.stars(`${lesson.id}.${id}`), 0);
+  const starsMax = gameIds.length * 3;
+  const topics = (lesson.subtitle || '').split(' · ').filter(Boolean);
 
   const game = (href, icon, title, desc, k, unit) => h('a', { class: 'game-card', href },
     h('span', { class: 'game-icon' }, icon),
@@ -28,13 +35,19 @@ function home() {
 
   const el = h('div', { class: 'screen home' },
     h('main', { class: 'wrap' },
-      h('header', { class: 'hero' },
-        h('div', { class: 'hero-kicker' }, config.brand.kicker),
-        h('h1', {}, config.brand.title[0], h('br'), config.brand.title[1]),
-        streak > 0 && h('div', { class: 'streak' }, `🔥 ${streak} ${streak === 1 ? 'deň' : streak < 5 ? 'dni' : 'dní'} po sebe`)),
-      h('p', { class: 'verdi' }, h('span', { class: 'verdi-face' }, config.mascot.face), h('span', {}, h('b', {}, `${config.mascot.name}: `), pick(MASCOT.home))),
+      h('header', { class: 'app-bar' },
+        h('img', { class: 'app-logo', src: 'icon.svg', alt: '' }),
+        h('div', { class: 'app-name' }, config.brand.title.join(' ')),
+        streak > 0 && h('div', { class: 'streak', title: 'Dni po sebe' }, `🔥 ${streak}`)),
       tabs,
-      h('p', { class: 'lesson-sub' }, lesson.subtitle),
+      h('section', { class: 'lesson-hero' },
+        h('div', { class: 'lesson-kicker' }, `Lekcia ${lesson.code}`),
+        h('h1', { class: 'lesson-title' }, lesson.title),
+        topics.length > 0 && h('div', { class: 'lesson-topics' }, topics.map((t) => h('span', { class: 'topic' }, t))),
+        h('div', { class: 'lesson-progress' },
+          h('div', { class: 'lp-bar' }, h('div', { style: `width:${starsMax ? (starsGot / starsMax) * 100 : 0}%` })),
+          h('div', { class: 'lp-text' }, `⭐ ${starsGot}/${starsMax} · 📖 ${readCount}/${lesson.chapters.length} kapitol`))),
+      h('p', { class: 'verdi' }, h('span', { class: 'verdi-face' }, config.mascot.face), h('span', {}, h('b', {}, `${config.mascot.name}: `), pick(MASCOT.home))),
 
       h('section', { class: 'story-card' },
         h('div', { class: 'story-card-head' },

@@ -8,11 +8,11 @@ import { sfx, burst, floatText } from '../fx.js';
 import config from '../../data/config.js';
 
 const COUNT = 6;
-const TIME = 90; // sekúnd na kolo
-const LIFE = 4200; // ako dlho je slovo nad vodou (ms)
-const HOLD = 5500; // ako dlho vydrží označené slovo
-const MAX_UP = 5;
-const SPAWN_MS = 900;
+const TIME = 120; // sekúnd na kolo
+const LIFE = 6500; // ako dlho je slovo nad vodou (ms)
+const HOLD = 9000; // ako dlho vydrží označené slovo
+const MAX_UP = 4;
+const SPAWN_MS = 1400;
 
 // Miesta na hladine (v %), v riadkoch striedavo dve a tri, aby sa slová neprekrývali.
 const SLOTS = [];

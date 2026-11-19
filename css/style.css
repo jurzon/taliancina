@@ -143,6 +143,31 @@ h1, h2 { text-wrap: balance; }
 .chapter.read .chapter-n { background: var(--green); color: var(--on-green); border-color: transparent; }
 .foot { margin-top: 20px; text-align: center; font-size: .78rem; line-height: 1.7; color: var(--muted); }
 
+/* Hlavička domovskej obrazovky: appka → lekcia */
+.app-bar { display: flex; align-items: center; gap: 10px; padding: 10px 0 14px; }
+.app-logo { width: 36px; height: 36px; border-radius: 10px; flex: none; }
+.app-name { flex: 1; min-width: 0; font-family: var(--serif); font-size: 1.15rem; font-weight: 700; color: var(--green); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-bar .streak { flex: none; padding: 4px 10px; font-size: .85rem; }
+.lesson-switch { display: flex; gap: 8px; overflow-x: auto; margin: 0 -16px 12px; padding: 2px 16px 4px; scrollbar-width: none; }
+.lesson-switch::-webkit-scrollbar { display: none; }
+.lesson-pill { flex: none; min-height: 40px; padding: 6px 14px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--card); color: var(--muted); font-size: .9rem; cursor: pointer; }
+.lesson-pill.on { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.lesson-hero {
+  position: relative; overflow: hidden;
+  padding: 18px 20px 16px; border-radius: 24px;
+  background: var(--green); color: var(--on-green);
+  box-shadow: var(--shadow);
+}
+.lesson-hero::after { content: ''; position: absolute; right: -40px; top: -40px; width: 150px; height: 150px; border-radius: 50%; background: var(--on-green); opacity: .1; box-shadow: 0 0 0 26px color-mix(in srgb, var(--on-green) 5%, transparent); pointer-events: none; }
+.lesson-kicker { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; opacity: .8; }
+.lesson-title { margin: 4px 0 10px; font-family: var(--serif); font-size: clamp(2rem, 9.5vw, 2.6rem); line-height: 1.05; letter-spacing: -.01em; }
+.lesson-topics { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.topic { padding: 3px 10px; border-radius: 999px; background: color-mix(in srgb, var(--on-green) 16%, transparent); font-size: .82rem; font-weight: 600; }
+.lp-bar { height: 8px; border-radius: 4px; background: color-mix(in srgb, var(--on-green) 22%, transparent); overflow: hidden; }
+.lp-bar div { height: 100%; border-radius: 4px; background: var(--sun); transition: width .4s; }
+.lp-text { margin-top: 6px; font-size: .82rem; opacity: .85; }
+.home .verdi { margin: 14px 0 16px; }
+
 /* Úvodná obrazovka */
 #splash {
   position: fixed; inset: 0; z-index: 100;

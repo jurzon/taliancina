@@ -8,6 +8,7 @@ import * as walkGame from './directions.js';
 import * as pairsGame from './pairs.js';
 import * as spellGame from './spelling.js';
 import * as pondGame from './pond.js';
+import * as sortGame from './sort.js';
 
 // title/desc môžu byť funkcie lekcie (napr. vlastný nadpis kariet v každej lekcii).
 // unit: jednotka rekordu na karte hry.
@@ -24,6 +25,8 @@ export const games = {
     title: (l) => l.pairsTitle || config.ui.pairs, desc: config.ui.pairsDesc, unit: (l) => `z ${Math.min(6, l.pairs.length)}` },
   pond: { view: pondGame.pond, validate: pondGame.validate, icon: '🌊',
     title: (l) => l.pondTitle || config.ui.pond, desc: config.ui.pondDesc, unit: (l) => `z ${Math.min(6, l.pairs.length)}` },
+  sort: { view: sortGame.sort, validate: sortGame.validate, icon: '🗂️',
+    title: (l) => l.sortTitle || config.ui.sort, desc: config.ui.sortDesc, unit: (l) => `z ${l.sort.items.length}` },
   spell: { view: spellGame.spelling, validate: spellGame.validate, icon: '🔤',
     title: config.ui.spell, desc: config.ui.spellDesc, unit: (l) => `z ${Math.min(8, l.spell.length)}` },
 };
