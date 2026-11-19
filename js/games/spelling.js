@@ -10,10 +10,13 @@ import config from '../../data/config.js';
 const COUNT = 8;
 const clean = (s) => s.toLowerCase().replace(/\s+/g, ' ').trim();
 
-// 'city walls' → ['C', 'I', 'T', 'Y', medzera, 'W', …] s pauzami medzi písmenami
+// 'city walls' → ['see', 'eye', 'tee', 'why', pauza, 'double you', …] s pauzami medzi písmenami.
+// Hlas by veľké písmeno čítal ako „capital C“, preto sa vyslovujú názvy písmen z config.letters
+// (inak malé písmeno).
 function letters(word, slow) {
   const gap = slow ? 750 : 280;
-  return [...word.toUpperCase()].flatMap((ch) => (ch === ' ' ? [gap * 2] : [ch, gap]));
+  const name = (ch) => config.letters?.[ch] ?? ch;
+  return [...word.toLowerCase()].flatMap((ch) => (ch === ' ' ? [gap * 2] : [name(ch), gap]));
 }
 
 export function spelling(lesson, rerender) {
