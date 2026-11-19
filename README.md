@@ -12,6 +12,28 @@ Taliančina pre slovensky hovoriacich žiakov: príbehy, v ktorých sa dá ťukn
   <img src="docs/cards.png" width="200" alt="Karty: konjunktív alebo indikatív">
 </p>
 
+## Pre učiteľa: ako to dať žiakom
+
+<img src="docs/qr.svg" width="180" align="right" alt="QR kód na https://jurzon.github.io/taliancina/">
+
+1. **Premietni QR kód** na tabuľu alebo ho vytlač (pravým tlačidlom → Uložiť obrázok). Žiaci ho naskenujú fotoaparátom v mobile.
+2. Alebo im pošli odkaz **https://jurzon.github.io/taliancina/**
+3. Appku si môžu pridať na plochu (v Chrome ⋮ → *Pridať na plochu*), potom sa otvára ako bežná aplikácia.
+
+Netreba žiadne konto ani inštaláciu. Pokrok sa ukladá iba v mobile žiaka.
+
+**Priame odkazy na hry** (napr. na domácu úlohu):
+6A: [Lettura viva](https://jurzon.github.io/taliancina/#/l/6a/read/0) ·
+[Costellazioni](https://jurzon.github.io/taliancina/#/l/6a/stars) ·
+[Congiuntivo o indicativo?](https://jurzon.github.io/taliancina/#/l/6a/choice) ·
+[Costruisci la frase](https://jurzon.github.io/taliancina/#/l/6a/build)<br>
+6B: [Lettura viva](https://jurzon.github.io/taliancina/#/l/6b/read/0) ·
+[Costellazioni](https://jurzon.github.io/taliancina/#/l/6b/stars) ·
+[Se potessi…](https://jurzon.github.io/taliancina/#/l/6b/choice) ·
+[Costruisci la frase](https://jurzon.github.io/taliancina/#/l/6b/build)
+
+<br clear="right">
+
 ## Lekcie
 
 | Lekcia | Príbeh | Slovná zásoba a gramatika |
