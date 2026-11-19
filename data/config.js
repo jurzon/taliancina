@@ -9,6 +9,9 @@ export default {
   // Slová, ktoré sa na začiatku vety v skladačke nezmenšujú
   keepCaps: [],
 
+  // Zdieľanie so žiakmi (tlačidlo 📲 na úvodnej obrazovke): verejná adresa appky a jej QR kód.
+  share: { url: 'https://jurzon.github.io/taliancina/', qr: 'docs/qr.svg' },
+
   brand: {
     kicker: 'Lezione 6 · Un ambiente prezioso',
     title: ['Albergo', 'Impatto Zero'],

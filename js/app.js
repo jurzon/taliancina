@@ -38,7 +38,8 @@ function home() {
       h('header', { class: 'app-bar' },
         h('img', { class: 'app-logo', src: 'icon.svg', alt: '' }),
         h('div', { class: 'app-name' }, config.brand.title.join(' ')),
-        streak > 0 && h('div', { class: 'streak', title: 'Dni po sebe' }, `🔥 ${streak}`)),
+        streak > 0 && h('div', { class: 'streak', title: 'Dni po sebe' }, `🔥 ${streak}`),
+        config.share && h('a', { class: 'share-btn', href: '#/share', 'aria-label': 'Zdieľať so žiakmi (QR kód)' }, '📲', h('span', {}, 'Zdieľať'))),
       tabs,
       h('section', { class: 'lesson-hero' },
         h('div', { class: 'lesson-kicker' }, `Lekcia ${lesson.code}`),
@@ -70,6 +71,7 @@ function home() {
         h('span', { class: 'game-body' }, h('span', { class: 'game-title' }, 'Moje slová'),
           h('span', { class: 'game-desc' }, store.hard().length ? `${store.hard().length} uložených na opakovanie` : 'Pri čítaní si hviezdičkou odlož ťažké slová'))),
       h('footer', { class: 'foot' },
+        config.share && h('div', {}, h('a', { href: '#/share' }, 'Pre učiteľa: QR kód pre žiakov')),
         h('div', {}, config.brand.source),
         h('div', {}, `Autor: ${config.brand.author} · `, h('a', { href: `mailto:${config.brand.email}` }, config.brand.email)),
         h('div', {}, 'Pre školy zadarmo.'))));
@@ -93,9 +95,42 @@ function words() {
     h('main', { class: 'wrap' }, h('p', { class: 'hint' }, 'Najprv si spomeň, potom ťukni na riadok a odkry preklad.'), list)) };
 }
 
+// Zdieľanie so žiakmi: veľký QR kód na premietnutie a odkaz. Adresa a obrázok sú v config.share.
+function share() {
+  const { url, qr } = config.share;
+  const note = h('p', { class: 'share-note', 'aria-live': 'polite' });
+  const card = h('div', { class: 'share-card' },
+    h('img', { class: 'share-qr', src: qr, alt: `QR kód: ${url}` }),
+    h('div', { class: 'share-url' }, url.replace(/^https?:\/\//, '')));
+  const say = (t) => { note.textContent = t; };
+  async function copy() {
+    try { await navigator.clipboard.writeText(url); say('Odkaz je skopírovaný ✓'); }
+    catch { say(`Skopíruj si odkaz: ${url}`); }
+  }
+  async function send() {
+    try { await navigator.share({ title: config.brand.title.join(' '), url }); } catch { /* zrušené */ }
+  }
+  function full() {
+    const req = card.requestFullscreen || card.webkitRequestFullscreen;
+    if (document.fullscreenElement) document.exitFullscreen?.();
+    else req?.call(card);
+  }
+  return { el: h('div', { class: 'screen' }, topbar('Zdieľať so žiakmi'),
+    h('main', { class: 'wrap share' },
+      h('p', { class: 'hint' }, 'Premietni QR kód na tabuľu. Žiaci ho naskenujú fotoaparátom v mobile a appka sa im hneď otvorí, bez konta a bez inštalácie.'),
+      card,
+      h('div', { class: 'row share-actions' },
+        h('button', { class: 'btn', type: 'button', onclick: copy }, '📋 Kopírovať odkaz'),
+        'share' in navigator && h('button', { class: 'btn ghost', type: 'button', onclick: send }, '📤 Poslať'),
+        (card.requestFullscreen || card.webkitRequestFullscreen) && h('button', { class: 'btn ghost', type: 'button', onclick: full }, '🖥️ Na celú obrazovku')),
+      note,
+      h('p', { class: 'muted share-tip' }, 'Tip: v mobile si appku pridáte na plochu cez ⋮ → Pridať na plochu.'))) };
+}
+
 function route() {
   const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (parts[0] === 'words') return words();
+  if (parts[0] === 'share' && config.share) return share();
   if (parts[0] === 'l') {
     const lesson = lessonById(parts[1]);
     if (lesson) {
