@@ -1,7 +1,6 @@
 // Načítanie lekcií a práca s textom. Bez DOM – používa to aj tools/validate.mjs.
-import common from '../data/common.js';
-import l6a from '../data/lezione6a.js';
-import l6b from '../data/lezione6b.js';
+import { common, lessons as rawLessons } from '../data/index.js';
+import config from '../data/config.js';
 
 // Rovné úvodzovky v slovenských textoch → správna slovenská koncová úvodzovka.
 function polish(v) {
@@ -24,10 +23,11 @@ export function parseGloss(src) {
 
 const commonGloss = parseGloss(polish(common));
 
-export const lessons = [l6a, l6b].map((raw) => {
+export const lessons = rawLessons.map((raw) => {
   const l = polish(raw);
+  l.games ??= [];
   l.gloss = parseGloss(l.gloss);
-  l.rounds = l.rounds.map((r) => ({
+  l.rounds = (l.rounds || []).map((r) => ({
     c: r.c,
     x: r.x,
     chains: r.chains.map(([w, sk]) => ({ w: w.split('|'), sk, phrase: `${r.c} ${w.split('|').join(' ')}` })),
@@ -46,7 +46,7 @@ export function lookup(lesson, key) {
 }
 
 // Rozloží riadok príbehu na ťukateľné slová a oddeľovače.
-const TOKEN = /\[([^\]]+)\]|(\p{L}+'?)|([^\p{L}[]+)/gu;
+const TOKEN = new RegExp(`\\[([^\\]]+)\\]|(${config.word})|([^\\p{L}[]+)`, 'gu');
 export function tokenize(line) {
   const out = [];
   for (const m of line.matchAll(TOKEN)) {

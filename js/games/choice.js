@@ -1,5 +1,5 @@
 // Karty s medzerou: vyber správnu spojku alebo tvar slovesa.
-import { h, topbar, sample, shuffle, pick, VERDI, resultView, verdictFor, speakBtn } from '../ui.js';
+import { h, topbar, sample, shuffle, pick, MASCOT, resultView, verdictFor, speakBtn } from '../ui.js';
 import { store } from '../store.js';
 
 const COUNT = 10;
@@ -42,7 +42,7 @@ export function choice(lesson, rerender) {
       fb.hidden = false;
       fb.className = 'feedback ' + (ok ? 'ok' : 'ko');
       fb.replaceChildren(
-        h('div', { class: 'fb-head' }, ok ? pick(VERDI.ok) + (streak >= 3 ? ` ${streak} za sebou!` : '') : pick(VERDI.ko), speakable(c) && speakBtn(full(c))),
+        h('div', { class: 'fb-head' }, ok ? pick(MASCOT.ok) + (streak >= 3 ? ` ${streak} za sebou!` : '') : pick(MASCOT.ko), speakable(c) && speakBtn(full(c))),
         h('div', { class: 'fb-why' }, c.why),
         h('button', { class: 'btn', type: 'button', onclick: next }, i + 1 < cards.length ? 'Ďalej →' : 'Výsledok'));
       fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -82,4 +82,15 @@ export function choice(lesson, rerender) {
 
   show();
   return { el };
+}
+
+export function validate(l, err) {
+  if (!l.cards?.length) err('karty: lekcia nemá žiadne karty (cards)');
+  if (!l.choiceTitle) err('karty: chýba choiceTitle');
+  for (const c of l.cards || []) {
+    if (c.s.split('___').length !== 2) err(`karta „${c.s}“: musí mať práve jednu medzeru`);
+    if (c.o.length < 2 || new Set(c.o).size !== c.o.length) err(`karta „${c.s}“: zlé možnosti`);
+    if (!c.why || !c.sk) err(`karta „${c.s}“: chýba vysvetlenie alebo preklad`);
+  }
+  return `${l.cards?.length || 0} kariet`;
 }

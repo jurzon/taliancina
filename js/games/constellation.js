@@ -1,6 +1,7 @@
 // Costellazioni – slovo v strede, okolo sa vynárajú slová; ťukaním skladáš ustálené spojenia.
-import { h, topbar, sample, pick, shuffle, VERDI, resultView, verdictFor, speakBtn } from '../ui.js';
+import { h, topbar, sample, pick, shuffle, MASCOT, resultView, verdictFor, speakBtn } from '../ui.js';
 import { store } from '../store.js';
+import config from '../../data/config.js';
 
 const ROUND_TIME = 40; // sekúnd na jedno slovo v strede
 const LIFE = 4600; // ako dlho slovo svieti (ms)
@@ -40,7 +41,7 @@ export function constellation(lesson, rerender) {
   const sky = h('div', { class: 'sky' }, lines, h('div', { class: 'center' }, centerEl, statusEl));
 
   const el = h('div', { class: 'screen night' },
-    topbar('Costellazioni', h('span', { class: 'hud-score' }, scoreEl, ' b')),
+    topbar(config.ui.stars, h('span', { class: 'hud-score' }, scoreEl, ' b')),
     h('div', { class: 'hud' }, h('div', { class: 'timebar' }, timeBar), h('div', { class: 'hud-row' }, dotsEl, comboEl)),
     sky);
 
@@ -141,7 +142,7 @@ export function constellation(lesson, rerender) {
       combo = 1;
       misses++;
       pop(b, 'miss');
-      setStatus(`«${[st.round.c, ...st.prefix, b.word].join(' ')}»? ${pick(VERDI.nonsense)}`, 'ko');
+      setStatus(`«${[st.round.c, ...st.prefix, b.word].join(' ')}»? ${pick(MASCOT.nonsense)}`, 'ko');
       hud();
       return;
     }
@@ -220,7 +221,7 @@ export function constellation(lesson, rerender) {
     const isBest = store.record(key, score, stars);
     cleanup();
     el.replaceWith(resultView({
-      title: 'Costellazioni',
+      title: config.ui.stars,
       big: `${score} bodov`,
       stars,
       verdict: (isBest ? 'Nový rekord! ' : '') + verdictFor(stars),
@@ -244,13 +245,34 @@ export function constellation(lesson, rerender) {
 
   // Úvodná obrazovka kola
   const intro = h('div', { class: 'sky-intro' },
-    h('h1', {}, 'Costellazioni'),
+    h('h1', {}, config.ui.stars),
     h('p', {}, 'V strede svieti slovo. Okolo sa vynárajú ďalšie – ťukaj tie, ktoré s ním tvoria spojenie.'),
-    h('p', {}, 'Viacslovné frázy ťukaj v poradí: ', h('b', {}, 'a → chilometro → zero'), '. Rýchle zásahy za sebou zvyšujú combo.'),
-    h('p', { class: 'muted' }, 'Omyl stojí len combo a kúsok presnosti. Signor Verdi sa díva.'),
+    h('p', {}, 'Viacslovné frázy ťukaj v poradí: ', h('b', {}, config.ui.starsExample), '. Rýchle zásahy za sebou zvyšujú combo.'),
+    h('p', { class: 'muted' }, `Omyl stojí len combo a kúsok presnosti. ${config.mascot.watching}`),
     h('button', { class: 'btn', type: 'button', onclick: () => { intro.remove(); startRound(); } }, 'Rozsvieť oblohu'),
     store.best(key) > 0 && h('p', { class: 'muted' }, `Tvoj rekord: ${store.best(key)} b`));
   sky.append(intro);
 
   return { el, cleanup };
+}
+
+// Kontrola obsahu pre tools/validate.mjs; vráti krátke zhrnutie.
+export function validate(l, err) {
+  if (!l.rounds.length) err('súhvezdia: lekcia nemá žiadne kolo (rounds)');
+  for (const r of l.rounds) {
+    const ok = new Set(r.chains.flatMap((c) => c.w));
+    const seen = new Set();
+    for (const c of r.chains) {
+      const id = c.w.join(' ');
+      if (seen.has(id)) err(`súhvezdie „${r.c}“: duplicitné spojenie ${id}`);
+      seen.add(id);
+      if (!c.sk) err(`súhvezdie „${r.c}“: ${id} nemá preklad`);
+      for (const o of r.chains) {
+        if (o !== c && o.w.length > c.w.length && c.w.every((w, i) => o.w[i] === w)) err(`súhvezdie „${r.c}“: ${id} je začiatkom iného spojenia`);
+      }
+    }
+    for (const x of r.x) if (ok.has(x)) err(`súhvezdie „${r.c}“: nezmysel „${x}“ je zároveň správne slovo`);
+    if (new Set(r.x).size !== r.x.length) err(`súhvezdie „${r.c}“: duplicitné nezmysly`);
+  }
+  return `${l.rounds.length} súhvezdí (${l.rounds.reduce((n, r) => n + r.chains.length, 0)} spojení)`;
 }

@@ -1,5 +1,6 @@
 // Malé pomôcky na stavbu DOM a spoločné kúsky rozhrania.
 import { speak } from './speech.js';
+import config from '../data/config.js';
 
 export function h(tag, attrs, ...kids) {
   const el = document.createElement(tag);
@@ -40,33 +41,8 @@ export function speakBtn(text, label = 'Vypočuť') {
   return h('button', { class: 'icon-btn', type: 'button', 'aria-label': label, onclick: (e) => { e.stopPropagation(); speak(text); } }, '🔊');
 }
 
-// Hlášky signora Verdiho
-export const VERDI = {
-  ok: ['Bravissimo!', 'Esatto!', 'Perfetto!', 'Che bravo!', 'Giusto!', 'Ottimo!', 'Così si fa!'],
-  ko: [
-    'Skoro! Aj signor Verdi si občas pomýli kontajner.',
-    'Nevadí. Chyby sú biologicky rozložiteľné.',
-    'Toto recyklujeme a skúsime znova.',
-    'Quasi! Taliančina vie byť záludná ako sedem kontajnerov.',
-    'Piano, piano. Nabudúce to sadne.',
-    'Tak toto pôjde do zmesového odpadu.',
-  ],
-  nonsense: [
-    'Zaujímavé, ale to ešte nikto nevynašiel.',
-    'Signor Verdi dvíha obočie.',
-    'Poetické. Ale nie.',
-    'Toto by neprešlo ani v Albergo Impatto Zero.',
-    'Odvážne spojenie! Bohužiaľ neexistuje.',
-  ],
-  home: [
-    'Benvenuto! Dnes šetríme energiu, nie slovíčka.',
-    'Výťah je mimo prevádzky. Vždy bol. Sú to schody.',
-    'Každé správne slovíčko zasadí pomyselný strom.',
-    'Káva nie je a chilometro zero. Taliančina áno.',
-    'Sebbene sia tardi, na jednu hru je čas vždy.',
-    'Dnes na raňajky: tri paradajky a konjunktív.',
-  ],
-};
+// Hlášky maskota (ok, ko, nonsense, home) – sú v data/config.js
+export const MASCOT = config.mascot;
 
 // Spoločná obrazovka s výsledkom
 export function resultView({ title, big, stars, verdict, body, again }) {
@@ -75,18 +51,11 @@ export function resultView({ title, big, stars, verdict, body, again }) {
     h('main', { class: 'wrap result' },
       h('div', { class: 'result-stars', 'aria-label': `${stars} z 3 hviezd` }, starsText(stars)),
       h('div', { class: 'result-big' }, big),
-      h('p', { class: 'verdi' }, h('span', { class: 'verdi-face' }, '🌿'), verdict),
+      h('p', { class: 'verdi' }, h('span', { class: 'verdi-face' }, config.mascot.face), verdict),
       body,
       h('div', { class: 'row' },
         h('button', { class: 'btn', type: 'button', onclick: again }, 'Ešte raz'),
         h('a', { class: 'btn ghost', href: '#/' }, 'Domov'))));
 }
 
-export function verdictFor(stars) {
-  return [
-    'Dnes to bolo na kompost, ale z kompostu rastú najlepšie paradajky.',
-    'Dobrý začiatok! Signor Verdi vám drží miesto na bicykli.',
-    'Molto bene! Ešte kúsok a ste a impatto zero.',
-    'Perfetto! Signor Verdi vám na počesť zasadil strom.',
-  ][stars];
-}
+export const verdictFor = (stars) => config.mascot.verdicts[stars];

@@ -1,11 +1,10 @@
 // Smerovanie podľa #hash a domovská obrazovka.
-import { h, topbar, pick, starsText, speakBtn, VERDI } from './ui.js';
+import { h, topbar, pick, starsText, speakBtn, MASCOT } from './ui.js';
 import { lessons, lessonById } from './lessons.js';
 import { store } from './store.js';
 import { reader } from './games/reader.js';
-import { constellation } from './games/constellation.js';
-import { choice } from './games/choice.js';
-import { builder } from './games/builder.js';
+import { games, text } from './games/index.js';
+import config from '../data/config.js';
 
 const root = document.getElementById('app');
 let cleanup = null;
@@ -30,10 +29,10 @@ function home() {
   const el = h('div', { class: 'screen home' },
     h('main', { class: 'wrap' },
       h('header', { class: 'hero' },
-        h('div', { class: 'hero-kicker' }, 'Lezione 6 · Un ambiente prezioso'),
-        h('h1', {}, 'Albergo', h('br'), 'Impatto Zero'),
+        h('div', { class: 'hero-kicker' }, config.brand.kicker),
+        h('h1', {}, config.brand.title[0], h('br'), config.brand.title[1]),
         streak > 0 && h('div', { class: 'streak' }, `🔥 ${streak} ${streak === 1 ? 'deň' : streak < 5 ? 'dni' : 'dní'} po sebe`)),
-      h('p', { class: 'verdi' }, h('span', { class: 'verdi-face' }, '🌿'), h('span', {}, h('b', {}, 'Signor Verdi: '), pick(VERDI.home))),
+      h('p', { class: 'verdi' }, h('span', { class: 'verdi-face' }, config.mascot.face), h('span', {}, h('b', {}, `${config.mascot.name}: `), pick(MASCOT.home))),
       tabs,
       h('p', { class: 'lesson-sub' }, lesson.subtitle),
 
@@ -41,24 +40,25 @@ function home() {
         h('div', { class: 'story-card-head' },
           h('span', { class: 'game-icon' }, '📖'),
           h('span', { class: 'game-body' },
-            h('span', { class: 'game-title' }, 'Lettura viva'),
+            h('span', { class: 'game-title' }, config.ui.reader),
             h('span', { class: 'game-desc' }, `${lesson.storyTitle} · prečítané ${readCount}/${lesson.chapters.length}`))),
         h('div', { class: 'chapters' }, lesson.chapters.map((ch, i) =>
           h('a', { class: 'chapter' + (store.isRead(`${lesson.id}.${i}`) ? ' read' : ''), href: `#/l/${lesson.id}/read/${i}` },
             h('span', { class: 'chapter-n' }, store.isRead(`${lesson.id}.${i}`) ? '✓' : i + 1),
             h('span', {}, ch.title, h('small', {}, ch.sk)))))),
 
-      game(`#/l/${lesson.id}/stars`, '✨', 'Costellazioni', 'Chytaj slová, ktoré k sebe patria', `${lesson.id}.stars`, 'b'),
-      game(`#/l/${lesson.id}/choice`, '🚦', lesson.choiceTitle, 'Desať kariet, pri každej vysvetlenie prečo', `${lesson.id}.choice`, 'z 10'),
-      game(`#/l/${lesson.id}/build`, '🧩', 'Costruisci la frase', 'Poskladaj taliansku vetu z dlaždíc', `${lesson.id}.build`, 'z 6'),
+      lesson.games.filter((id) => games[id]).map((id) => {
+        const g = games[id];
+        return game(`#/l/${lesson.id}/${id}`, g.icon, text(g.title, lesson), text(g.desc, lesson), `${lesson.id}.${id}`, text(g.unit, lesson));
+      }),
 
       h('a', { class: 'game-card plain', href: '#/words' },
         h('span', { class: 'game-icon' }, '⭐'),
         h('span', { class: 'game-body' }, h('span', { class: 'game-title' }, 'Moje slová'),
           h('span', { class: 'game-desc' }, store.hard().length ? `${store.hard().length} uložených na opakovanie` : 'Pri čítaní si hviezdičkou odlož ťažké slová'))),
       h('footer', { class: 'foot' },
-        h('div', {}, 'Podľa učebnice DIECI, lezione 6 · na domáce precvičovanie'),
-        h('div', {}, 'Autor: Juraj Zonnenschein · ', h('a', { href: 'mailto:jurzon@seznam.cz' }, 'jurzon@seznam.cz')),
+        h('div', {}, config.brand.source),
+        h('div', {}, `Autor: ${config.brand.author} · `, h('a', { href: `mailto:${config.brand.email}` }, config.brand.email)),
         h('div', {}, 'Pre školy zadarmo.'))));
   return { el };
 }
@@ -87,9 +87,7 @@ function route() {
     const lesson = lessonById(parts[1]);
     if (lesson) {
       if (parts[2] === 'read' && lesson.chapters[+parts[3]]) return reader(lesson, +parts[3]);
-      if (parts[2] === 'stars') return constellation(lesson, render);
-      if (parts[2] === 'choice') return choice(lesson, render);
-      if (parts[2] === 'build') return builder(lesson, render);
+      if (lesson.games.includes(parts[2]) && games[parts[2]]) return games[parts[2]].view(lesson, render);
     }
   }
   return home();

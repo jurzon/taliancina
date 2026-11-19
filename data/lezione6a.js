@@ -8,6 +8,7 @@ export default {
   storyTitle: 'Albergo Impatto Zero',
   choiceTitle: 'Congiuntivo o indicativo?',
   choiceHint: 'Sebbene, benché, nonostante + konjunktív. Anche se + indikatív.',
+  games: ['stars', 'choice', 'build'],
 
   chapters: [
     {
@@ -392,18 +393,18 @@ biodegradabile | biologicky rozložiteľný
 
   // Skladačka: sk = zadanie, it = riešenie, x = dlaždice navyše, alt = iné správne poradia
   build: [
-    { sk: 'Hoci je hotel drahý, je vždy plný.', it: "Sebbene l'hotel sia caro, è sempre pieno.", x: ['sono'] },
-    { sk: 'Každý deň triedim odpad.', it: 'Faccio la raccolta differenziata ogni giorno.', x: ['rifiuti'],
+    { sk: 'Hoci je hotel drahý, je vždy plný.', t: "Sebbene l'hotel sia caro, è sempre pieno.", x: ['sono'] },
+    { sk: 'Každý deň triedim odpad.', t: 'Faccio la raccolta differenziata ogni giorno.', x: ['rifiuti'],
       alt: ['Ogni giorno faccio la raccolta differenziata.'] },
-    { sk: 'Jeme len sezónne ovocie a zeleninu.', it: 'Mangiamo solo frutta e verdura di stagione.', x: ['stazione'],
+    { sk: 'Jeme len sezónne ovocie a zeleninu.', t: 'Mangiamo solo frutta e verdura di stagione.', x: ['stazione'],
       alt: ['Mangiamo solo verdura e frutta di stagione.'] },
-    { sk: 'Myslím si, že voda z vodovodu je dobrá.', it: "Penso che l'acqua del rubinetto sia buona.", x: ['è'] },
-    { sk: 'Aj keď som unavený, idem pešo.', it: 'Anche se sono stanco, vado a piedi.', x: ['sia'],
+    { sk: 'Myslím si, že voda z vodovodu je dobrá.', t: "Penso che l'acqua del rubinetto sia buona.", x: ['è'] },
+    { sk: 'Aj keď som unavený, idem pešo.', t: 'Anche se sono stanco, vado a piedi.', x: ['sia'],
       alt: ['Vado a piedi anche se sono stanco.'] },
-    { sk: 'Je dôležité, aby každý znižoval spotrebu.', it: 'È importante che ognuno riduca i consumi.', x: ['riduce'] },
-    { sk: 'Hotel používa úsporné žiarovky.', it: "L'hotel usa lampadine a basso consumo.", x: ['alto'] },
-    { sk: 'Hoci je zima, výhľad je nádherný.', it: 'Benché faccia freddo, il panorama è bellissimo.', x: ['fa'] },
-    { sk: 'Môžete platiť kartou pod podmienkou, že zasadíte strom.', it: 'Può pagare con la carta a patto che pianti un albero.', x: ['pianta'] },
-    { sk: 'Napriek tomu, že je november, nachádzam tri paradajky.', it: 'Nonostante sia novembre, trovo tre pomodori.', x: ['è'] },
+    { sk: 'Je dôležité, aby každý znižoval spotrebu.', t: 'È importante che ognuno riduca i consumi.', x: ['riduce'] },
+    { sk: 'Hotel používa úsporné žiarovky.', t: "L'hotel usa lampadine a basso consumo.", x: ['alto'] },
+    { sk: 'Hoci je zima, výhľad je nádherný.', t: 'Benché faccia freddo, il panorama è bellissimo.', x: ['fa'] },
+    { sk: 'Môžete platiť kartou pod podmienkou, že zasadíte strom.', t: 'Può pagare con la carta a patto che pianti un albero.', x: ['pianta'] },
+    { sk: 'Napriek tomu, že je november, nachádzam tri paradajky.', t: 'Nonostante sia novembre, trovo tre pomodori.', x: ['è'] },
   ],
 };

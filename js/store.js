@@ -1,6 +1,8 @@
+import config from '../data/config.js';
+
 // Pokrok hráča v localStorage. Keď úložisko nefunguje, hra beží ďalej, len si nič nepamätá.
-const KEY = 'impattozero.v1';
-const fresh = () => ({ lesson: '6a', best: {}, stars: {}, read: {}, hard: [], streak: { day: '', n: 0 }, font: 2 });
+const KEY = config.storeKey;
+const fresh = () => ({ lesson: config.defaultLesson, best: {}, stars: {}, read: {}, hard: [], streak: { day: '', n: 0 }, font: 2 });
 
 let s = fresh();
 try {

@@ -7,6 +7,7 @@ export default {
   storyTitle: 'Il sogno del signor Verdi',
   choiceTitle: 'Se potessi…',
   choiceHint: '1. typ: se + presente → presente. 2. typ: se + congiuntivo imperfetto → condizionale.',
+  games: ['stars', 'choice', 'build'],
 
   chapters: [
     {
@@ -244,19 +245,19 @@ per ora | zatiaľ
   ],
 
   build: [
-    { sk: 'Keby som mohol, žil by som na ostrove.', it: "Se potessi, vivrei su un'isola.", x: ['potrei'],
+    { sk: 'Keby som mohol, žil by som na ostrove.', t: "Se potessi, vivrei su un'isola.", x: ['potrei'],
       alt: ["Vivrei su un'isola se potessi."] },
-    { sk: 'Ak nájdem parkovanie, mám šťastie.', it: 'Se trovo parcheggio, sono fortunato.', x: ['sarei'],
+    { sk: 'Ak nájdem parkovanie, mám šťastie.', t: 'Se trovo parcheggio, sono fortunato.', x: ['sarei'],
       alt: ['Sono fortunato se trovo parcheggio.'] },
-    { sk: 'Keby som mal viac odvahy, zmenil by som život.', it: 'Se avessi più coraggio, cambierei vita.', x: ['avrei'],
+    { sk: 'Keby som mal viac odvahy, zmenil by som život.', t: 'Se avessi più coraggio, cambierei vita.', x: ['avrei'],
       alt: ['Cambierei vita se avessi più coraggio.'] },
-    { sk: 'Bolo by pekné, keby mestá boli ako Ferrara.', it: 'Sarebbe bello se le città fossero come Ferrara.', x: ['sono'] },
-    { sk: 'V meste je priveľa hluku a premávky.', it: "In città c'è troppo rumore e traffico.", x: ['troppa'],
+    { sk: 'Bolo by pekné, keby mestá boli ako Ferrara.', t: 'Sarebbe bello se le città fossero come Ferrara.', x: ['sono'] },
+    { sk: 'V meste je priveľa hluku a premávky.', t: "In città c'è troppo rumore e traffico.", x: ['troppa'],
       alt: ["In città c'è troppo traffico e rumore.", "C'è troppo rumore e traffico in città.", "C'è troppo traffico e rumore in città."] },
-    { sk: 'Keby boli služby ďaleko, bol by to problém.', it: 'Se i servizi fossero lontani, sarebbe un problema.', x: ['fosse'],
+    { sk: 'Keby boli služby ďaleko, bol by to problém.', t: 'Se i servizi fossero lontani, sarebbe un problema.', x: ['fosse'],
       alt: ['Sarebbe un problema se i servizi fossero lontani.'] },
-    { sk: 'Ak bude zajtra slnko, kúpim loďku.', it: "Se domani c'è il sole, compro una barca.", x: ['comprerei'],
+    { sk: 'Ak bude zajtra slnko, kúpim loďku.', t: "Se domani c'è il sole, compro una barca.", x: ['comprerei'],
       alt: ["Compro una barca se domani c'è il sole."] },
-    { sk: 'Na vidieku je vzduch čistý a je tam ticho.', it: "In campagna l'aria è pulita e c'è silenzio.", x: ['inquinata'] },
+    { sk: 'Na vidieku je vzduch čistý a je tam ticho.', t: "In campagna l'aria è pulita e c'è silenzio.", x: ['inquinata'] },
   ],
 };

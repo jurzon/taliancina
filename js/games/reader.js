@@ -1,8 +1,9 @@
 // Lettura viva – príbeh, v ktorom sa dá ťuknúť na každé slovo.
-import { h, topbar, speakBtn, VERDI, pick } from '../ui.js';
+import { h, topbar, speakBtn, MASCOT, pick } from '../ui.js';
 import { tokenize, plain, lookup } from '../lessons.js';
 import { store } from '../store.js';
 import { speak } from '../speech.js';
+import config from '../../data/config.js';
 
 const FONT = [1.0, 1.1, 1.22, 1.36, 1.5];
 
@@ -80,11 +81,11 @@ export function reader(lesson, n) {
       const ok = val === truth;
       fb.hidden = false;
       fb.className = 'vf-fb ' + (ok ? 'ok' : 'ko');
-      fb.textContent = (ok ? pick(VERDI.ok) + ' ' : `Je to ${truth ? 'vero' : 'falso'}. `) + why;
+      fb.textContent = (ok ? pick(MASCOT.ok) + ' ' : `Je to ${(truth ? config.ui.vfTrue : config.ui.vfFalse).toLowerCase()}. `) + why;
       row.querySelectorAll('button').forEach((b) => { b.disabled = true; });
       if (++answered === ch.vf.length) finish();
     } }, label);
-    const row = h('div', { class: 'row' }, mk('Vero', true), mk('Falso', false));
+    const row = h('div', { class: 'row' }, mk(config.ui.vfTrue, true), mk(config.ui.vfFalse, false));
     return h('div', { class: 'vf' }, h('div', { class: 'vf-stmt' }, stmt), row, fb);
   });
 
@@ -93,7 +94,7 @@ export function reader(lesson, n) {
     const next = n + 1 < lesson.chapters.length;
     done.hidden = false;
     done.replaceChildren(
-      h('p', { class: 'verdi' }, h('span', { class: 'verdi-face' }, '🌿'), next ? 'Kapitola prečítaná. Signor Verdi už chystá ďalšiu.' : 'Príbeh dočítaný! Teraz si slovíčka vyskúšaj v hrách.'),
+      h('p', { class: 'verdi' }, h('span', { class: 'verdi-face' }, config.mascot.face), next ? config.mascot.chapterDone : 'Príbeh dočítaný! Teraz si slovíčka vyskúšaj v hrách.'),
       h('div', { class: 'row' },
         next && h('a', { class: 'btn', href: `#/l/${lesson.id}/read/${n + 1}` }, 'Ďalšia kapitola →'),
         h('a', { class: 'btn' + (next ? ' ghost' : ''), href: '#/' }, 'Domov')));
@@ -106,7 +107,7 @@ export function reader(lesson, n) {
     h('div', { class: 'story-sub' }, ch.sk),
     h('p', { class: 'hint' }, 'Ťukni na ktorékoľvek slovo. ', h('span', { class: 'w has-q demo' }, 'Podčiarknuté'), ' slová skrývajú otázku.'),
     paras,
-    h('section', { class: 'vf-box' }, h('h2', {}, 'Vero o falso?'), vf),
+    h('section', { class: 'vf-box' }, h('h2', {}, config.ui.vf), vf),
     done);
 
   const applyFont = () => article.style.setProperty('--rs', FONT[store.font] + 'rem');
@@ -117,7 +118,7 @@ export function reader(lesson, n) {
   } }, label);
 
   const el = h('div', { class: 'screen reader', onclick: closeSheet },
-    topbar('Lettura viva', [fontBtn('A−', -1), fontBtn('A+', 1)]),
+    topbar(config.ui.reader, [fontBtn('A−', -1), fontBtn('A+', 1)]),
     h('main', { class: 'wrap' }, article),
     sheet);
   sheet.addEventListener('click', (e) => e.stopPropagation());

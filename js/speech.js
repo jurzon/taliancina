@@ -1,10 +1,13 @@
+import config from '../data/config.js';
+
 // Výslovnosť cez hlas prehliadača. Keď nie je k dispozícii, ticho nerobí nič.
 let voice = null;
 
 function findVoice() {
   if (!('speechSynthesis' in window)) return;
   const vs = speechSynthesis.getVoices();
-  voice = vs.find((v) => v.lang === 'it-IT') || vs.find((v) => v.lang && v.lang.toLowerCase().startsWith('it')) || null;
+  const base = config.speechLang.slice(0, 2).toLowerCase();
+  voice = vs.find((v) => v.lang === config.speechLang) || vs.find((v) => v.lang && v.lang.toLowerCase().startsWith(base)) || null;
 }
 
 if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -17,7 +20,7 @@ export function speak(text) {
   try {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text.replace(/[«»]/g, ''));
-    u.lang = 'it-IT';
+    u.lang = config.speechLang;
     if (voice) u.voice = voice;
     u.rate = 0.88;
     speechSynthesis.speak(u);
