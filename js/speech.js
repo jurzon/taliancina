@@ -48,6 +48,26 @@ export function speakSeq(parts, { rate = 0.88, onend } = {}) {
   step();
 }
 
+// Rozpoznávanie reči (Chrome, Edge, Safari, Android). Vo Firefoxe nie je – hra vtedy ponúkne náhradu.
+const Recognition = typeof window !== 'undefined' ? (window.SpeechRecognition || window.webkitSpeechRecognition) : null;
+export const canListen = () => !!Recognition;
+
+// Vypočuje jednu vetu. onresult dostane pole možností (najpravdepodobnejšia prvá).
+// Vráti funkciu na zastavenie.
+export function listen({ onresult, onerror, onend } = {}) {
+  if (!Recognition) { onerror?.('unsupported'); onend?.(); return () => {}; }
+  stopSpeech();
+  const r = new Recognition();
+  r.lang = config.speechLang;
+  r.interimResults = false;
+  r.maxAlternatives = 5;
+  r.onresult = (e) => onresult?.([...e.results[0]].map((a) => a.transcript));
+  r.onerror = (e) => onerror?.(e.error);
+  r.onend = () => onend?.();
+  try { r.start(); } catch { onerror?.('start'); onend?.(); }
+  return () => { try { r.abort(); } catch { /* nič */ } };
+}
+
 export function stopSpeech() {
   seq++;
   try { speechSynthesis.cancel(); } catch { /* nič */ }

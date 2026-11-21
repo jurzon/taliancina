@@ -9,10 +9,13 @@ import * as pairsGame from './pairs.js';
 import * as spellGame from './spelling.js';
 import * as pondGame from './pond.js';
 import * as sortGame from './sort.js';
+import * as advGame from './adventure.js';
 
 // title/desc môžu byť funkcie lekcie (napr. vlastný nadpis kariet v každej lekcii).
 // unit: jednotka rekordu na karte hry.
 export const games = {
+  adventure: { view: advGame.adventure, validate: advGame.validate, icon: '🧭',
+    title: (l) => l.adventure?.title || config.ui.adventure, desc: config.ui.adventureDesc, unit: () => 'b' },
   stars: { view: stars.constellation, validate: stars.validate, icon: '✨',
     title: config.ui.stars, desc: 'Chytaj slová, ktoré k sebe patria', unit: () => 'b' },
   choice: { view: choiceGame.choice, validate: choiceGame.validate, icon: '🚦',

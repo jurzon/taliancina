@@ -2,7 +2,7 @@ import config from '../data/config.js';
 
 // Pokrok hráča v localStorage. Keď úložisko nefunguje, hra beží ďalej, len si nič nepamätá.
 const KEY = config.storeKey;
-const fresh = () => ({ lesson: config.defaultLesson, best: {}, stars: {}, read: {}, hard: [], streak: { day: '', n: 0 }, font: 2 });
+const fresh = () => ({ lesson: config.defaultLesson, best: {}, stars: {}, read: {}, hard: [], streak: { day: '', n: 0 }, font: 2, srs: {}, kv: {} });
 
 let s = fresh();
 try {
@@ -51,6 +51,14 @@ export const store = {
     y.setDate(y.getDate() - 1);
     return s.streak.day === today || s.streak.day === dayStr(y) ? s.streak.n : 0;
   },
+
+  // Ľubovoľné údaje hry (napr. pokrok v príbehu): store.get('u5.adv', {}).
+  get: (k, dflt) => s.kv[k] ?? dflt,
+  set(k, v) { s.kv[k] = v; save(); },
+
+  // Karty na opakovanie (js/srs.js): { id: { …, box, due } }
+  srs: () => s.srs,
+  saveSrs() { save(); },
 
   hard: () => s.hard,
   isHard: (id) => s.hard.some((w) => w.id === id),
