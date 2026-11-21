@@ -54,17 +54,20 @@ export function check(input, t, alt = []) {
   return { ok: dist <= 1 && n.length > 0, typo: dist === 1, best: display(best) };
 }
 
-const rough = (s) => String(s).normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
+export const rough = (s) => String(s).normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
   .replace(/[’'‘`]/g, '').replace(/[^\p{L}\p{N} ]+/gu, ' ').replace(/\s+/g, ' ').trim();
 
 // Slová správnej vety, ktoré v odpovedi chýbajú alebo sú inak → [{ w, ok }]
 export function diffWords(input, target) {
   const have = normalize(input).split(' ');
   return display(target).split(/\s+/).map((w) => {
-    const k = normalize(w);
-    const i = have.indexOf(k);
-    if (i >= 0) have.splice(i, 1);
-    return { w, ok: !k || i >= 0 };
+    // Stiahnutý tvar je jedno slovo, ale po normalizácii viac (let's → let us): musia sedieť všetky časti.
+    const ks = normalize(w).split(' ').filter(Boolean);
+    if (!ks.length) return { w, ok: true };
+    const left = [...have];
+    const ok = ks.every((k) => { const i = left.indexOf(k); if (i >= 0) left.splice(i, 1); return i >= 0; });
+    if (ok) have.splice(0, have.length, ...left);
+    return { w, ok };
   });
 }
 
@@ -85,3 +88,25 @@ export const initials = (t) => display(t).replace(/\p{L}+/gu, (w) => w[0] + '_'.
 
 // Obsahuje text frázu? (kontrolný zoznam pri písaní)
 export const hasPhrase = (text, phrase) => ` ${normalize(text)} `.includes(` ${normalize(phrase)} `);
+
+// Ktoré slovo má preklep? → [napísané, správne] alebo null (len keď sedí počet slov).
+export function typoWord(input, target) {
+  const clean = (w) => w.toLowerCase().replace(/[.,!?;:«»]/g, '');
+  const a = input.trim().split(/\s+/), b = display(target).split(/\s+/);
+  if (a.length !== b.length) return null;
+  for (let i = 0; i < a.length; i++) if (clean(a[i]) !== clean(b[i])) return [a[i].replace(/[.,!?;:]/g, ''), b[i].replace(/[.,!?;:]/g, '')];
+  return null;
+}
+
+// Rozdelí správne slovo na [spoločný začiatok, inú časť, spoločný koniec] voči napísanému.
+export function wordFix(wrong, right) {
+  const w = wrong.toLowerCase(), r = right.toLowerCase();
+  let i = 0;
+  while (i < w.length && i < r.length && w[i] === r[i]) i++;
+  let j = 0;
+  while (j < w.length - i && j < r.length - i && w[w.length - 1 - j] === r[r.length - 1 - j]) j++;
+  return [right.slice(0, i), right.slice(i, right.length - j), right.slice(right.length - j)];
+}
+
+// Slová odpovede, ktoré v správnej vete nie sú (na prečiarknutie) → [{ w, ok }]
+export const extraWords = (input, target) => diffWords(target, input);
