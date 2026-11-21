@@ -21,7 +21,7 @@ import { store } from '../store.js';
 import { speak, stopSpeech, listen, canListen } from '../speech.js';
 import { check, diffWords, heardRatio, initials, hasPhrase, display, normalize } from '../answer.js';
 import * as srs from '../srs.js';
-import { canAssess, assessWriting } from '../ai.js';
+import { canAssess, assessWriting, checkAnswer } from '../ai.js';
 import { sfx, floatText, burst } from '../fx.js';
 import config from '../../data/config.js';
 
@@ -266,14 +266,29 @@ export function adventure(lesson) {
     } }, '🎤 Povedz');
     const tools = h('div', { class: 'row adv-tools' }, okBtn, mic, hintBtn);
 
-    function submit(spoken = false) {
+    async function submit(spoken = false) {
       if (locked || !input.value.trim()) return;
-      const r = { ...check(input.value, t, alt), hints, tries, ms: performance.now() - t0, spoken };
+      const answer = input.value.trim();
+      const r = { ...check(answer, t, alt), hints, tries, ms: performance.now() - t0, spoken };
+      // Iné znenie, než je vo vzore: či je správne, posúdi AI (ak je zapnutá).
+      let ai = null;
+      if (!r.ok && canAssess() && words(answer) >= 2) {
+        locked = true;
+        tools.hidden = true;
+        fb.hidden = false;
+        fb.className = 'feedback';
+        fill(fb, h('div', { class: 'muted' }, `${config.mascot.face} Tvoja veta je iná ako vo vzore. ${config.mascot.name} premýšľa, či je správne…`));
+        ai = await checkAnswer({ sk: p, t: display(t), alt: (alt || []).map(display), answer });
+        locked = false;
+        tools.hidden = false;
+        if (ai?.ok) Object.assign(r, { ok: true, typo: false, best: answer });
+      }
       tries++;
       const again = onAnswer(r, input);
       fb.hidden = false;
       fb.className = 'feedback ' + (r.ok ? 'ok' : 'ko');
-      const solution = h('div', { class: 'fb-solution' }, r.ok ? r.best : diffWords(input.value, r.best).map((x, i) => [i ? ' ' : '', h('span', { class: x.ok ? '' : 'd-ko' }, x.w)]));
+      const solution = h('div', { class: 'fb-solution' }, r.ok ? r.best : diffWords(answer, r.best).map((x, i) => [i ? ' ' : '', h('span', { class: x.ok ? '' : 'd-ko' }, x.w)]));
+      const note = ai?.note && h('div', { class: 'adv-ai-note' }, '💬 ', ai.note);
       if (r.ok) {
         sfx.pop(3 - hints);
         speak(r.best);
@@ -282,14 +297,18 @@ export function adventure(lesson) {
         tools.hidden = true;
         const nextBtn = h('button', { class: 'btn', type: 'button', onclick: onNext }, 'Ďalej →');
         fill(fb,
-          h('div', { class: 'fb-head' }, r.typo ? 'Skoro presne – pozor na preklep:' : pick(MASCOT.ok), speakBtn(r.best)),
-          solution, sub && h('div', { class: 'muted' }, sub), nextBtn);
+          h('div', { class: 'fb-head' }, ai ? 'Správne, aj takto sa to dá povedať ✓' : r.typo ? 'Skoro presne – pozor na preklep:' : pick(MASCOT.ok), speakBtn(r.best)),
+          solution, note,
+          ai && h('div', { class: 'muted' }, 'Vo vzore: ', display(t)),
+          sub && h('div', { class: 'muted' }, sub), nextBtn);
         nextBtn.focus();
       } else {
         sfx.buzz();
         speak(r.best);
+        const yours = h('div', { class: 'muted' }, 'Tvoja odpoveď: ', answer);
+        const fixed = ai?.better && normalize(ai.better) !== normalize(answer) && h('div', { class: 'muted' }, 'Tvoja veta opravená: ', h('b', {}, ai.better));
         if (again) {
-          fb.replaceChildren(h('div', { class: 'fb-head' }, 'Ešte nie. Správne je takto – teraz to napíš sám:', speakBtn(r.best)), solution);
+          fill(fb, h('div', { class: 'fb-head' }, 'Ešte nie. Správne je takto – teraz to napíš sám:', speakBtn(r.best)), solution, note, fixed, yours);
           input.value = '';
           input.focus();
         } else {
@@ -297,8 +316,7 @@ export function adventure(lesson) {
           input.disabled = true;
           tools.hidden = true;
           const nextBtn = h('button', { class: 'btn', type: 'button', onclick: onNext }, 'Ďalej →');
-          fb.replaceChildren(h('div', { class: 'fb-head' }, 'Takto správne (vráti sa ti ešte):', speakBtn(r.best)), solution,
-            h('div', { class: 'muted' }, 'Tvoja odpoveď: ', input.value), nextBtn);
+          fill(fb, h('div', { class: 'fb-head' }, 'Takto správne (vráti sa ti ešte):', speakBtn(r.best)), solution, note, fixed, yours, nextBtn);
           nextBtn.focus();
         }
       }
