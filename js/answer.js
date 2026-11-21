@@ -20,7 +20,8 @@ export function variants(t) {
 }
 
 // Ako sa správna odpoveď ukáže: zátvorky preč, ich obsah ostane.
-export const display = (t) => t.replace(/[()]/g, '').replace(/\s+/g, ' ').trim();
+// Prvé písmeno veľké, aj keď voliteľný začiatok chýba: '(Excuse me,) how…' → 'How…'.
+export const display = (t) => { const s = t.replace(/[()]/g, '').replace(/\s+/g, ' ').trim(); return s.charAt(0).toUpperCase() + s.slice(1); };
 
 export function lev(a, b) {
   const d = Array.from({ length: b.length + 1 }, (_, j) => j);

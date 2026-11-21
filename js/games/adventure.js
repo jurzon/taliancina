@@ -27,6 +27,8 @@ import config from '../../data/config.js';
 
 const MAX_REVIEW = 6;
 const MAX_WORDS = 8;
+// replaceChildren by vypísal aj undefined/false ako text – tu sa vynechajú.
+const fill = (node, ...kids) => node.replaceChildren(...kids.flat().filter((k) => k != null && k !== false));
 const words = (s) => (s.trim().match(/\p{L}+(?:['’]\p{L}+)*/gu) || []).length;
 
 export function adventure(lesson) {
@@ -279,7 +281,7 @@ export function adventure(lesson) {
         input.disabled = true;
         tools.hidden = true;
         const nextBtn = h('button', { class: 'btn', type: 'button', onclick: onNext }, 'Ďalej →');
-        fb.replaceChildren(
+        fill(fb,
           h('div', { class: 'fb-head' }, r.typo ? 'Skoro presne – pozor na preklep:' : pick(MASCOT.ok), speakBtn(r.best)),
           solution, sub && h('div', { class: 'muted' }, sub), nextBtn);
         nextBtn.focus();
@@ -406,7 +408,7 @@ export function adventure(lesson) {
               const marks = diffWords(alts[0] || '', t);
               if (ok) { sfx.pop(2); S.gain(tries === 1 ? 2 : 1, 2, micBtn); micBtn.hidden = true; }
               else { sfx.buzz(); if (tries === 1) S.gain(0, 2); }
-              fb.replaceChildren(
+              fill(fb,
                 h('div', { class: 'fb-head' }, ok ? pick(MASCOT.ok) : 'Červené slová som nepočula. Skús znova, pomalšie.'),
                 h('div', { class: 'fb-solution' }, marks.map((x, k) => [k ? ' ' : '', h('span', { class: x.ok ? 'd-ok' : 'd-ko' }, x.w)])),
                 h('div', { class: 'muted' }, 'Počula som: ', alts[0] || '—'),
